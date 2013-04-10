@@ -20,7 +20,10 @@ int wmain(int argc,wchar_t * argv[])
 	PXCSmartPtr<PXCSession> session;
 	pxcStatus sts = PXCSession_Create(&session);
 	if(sts<PXC_STATUS_NO_ERROR) 
-		wprintf_s(L"Failed to create the SDK session\n");return 3;
+	{
+		wprintf_s(L"Failed to create the SDK session\n");
+		return 3;
+	}
 
 	// Инициализируем консоль для сессии
 	UtilCmdLine cmdl(session);
