@@ -39,8 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\psdk\Intel\PCSDK\sample\common\include;C:\psdk\Intel\PCSDK\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\psdk\Intel\PCSDK\sample\common\lib\Win32\v100;C:\psdk\Intel\PCSDK\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\perceptual\PCSDK\sample\common\include;C:\perceptual\PCSDK\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\perceptual\PCSDK\sample\common\lib\Win32\v100;C:\perceptual\PCSDK\lib\Win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -79,10 +79,12 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\perceptual\PCSDK\sample\common\include\face_render.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\perceptual\PCSDK\sample\common\src\face_render.cpp" />
     <ClCompile Include="Perceptual.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
