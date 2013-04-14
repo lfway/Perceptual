@@ -14,6 +14,8 @@
 
 #include <math.h>
 
+#include "face_pipeline.h"
+
 #define theLandMarkData PXCFaceAnalysis::Landmark::LandmarkData
 #define theCoords std::pair<int, int>
 
@@ -35,7 +37,7 @@ int getDistance(theCoords point1, theCoords point2)
 	return sqrt( double((point1.first-point2.first)*(point1.first-point2.first) + (point1.second-point2.second)*(point1.second-point2.second)));
 }
 
-int wmain(int argc,wchar_t * argv[])
+int wmain1(int argc,wchar_t * argv[])
 {
 	
 	// Создаем сессию
@@ -171,52 +173,8 @@ int wmain(int argc,wchar_t * argv[])
 
 
 
-/*#include "stdafx.h"
-#include "util_render.h"
-#include "util_pipeline.h"
-#include "face_render.h"
 
 
-class FacePipeline: public UtilPipeline 
-{
-public:
-	FacePipeline(void): UtilPipeline()
-	{
-		m_face_render = NULL;
-		// Create a face renderer
-		m_face_render =	new	FaceRender(L"Face Viewer");
-		// Enable the face landmark detector
-		EnableFaceLandmark();
-	}
-	~FacePipeline()
-	{
-		if(m_face_render != NULL)
-			delete m_face_render;
-	}
-
-	virtual bool OnNewFrame(void)
-	{
-		/* face * /
-		PXCFaceAnalysis *faceAnalyzer = QueryFace();
-		PXCFaceAnalysis::Landmark *landmark = faceAnalyzer->DynamicCast<PXCFaceAnalysis::Landmark>();
-		// loop all faces
-		m_face_render->ClearData();
-		for(int fidx = 0; ; fidx++)
-		{
-			pxcUID fid = 0;
-			pxcU64 timeStamp = 0;
-			pxcStatus sts = faceAnalyzer->QueryFace(fidx, &fid, &timeStamp);
-			if(sts < PXC_STATUS_NO_ERROR)
-				break;
-			// no more faces
-			m_face_render->SetLandmarkData (landmark, fid);
-		}
-		return (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );
-	}
-
-protected: 
-	FaceRender* m_face_render;
-};
 
 
 int _tmain(int argc, _TCHAR* argv[]) 
@@ -224,15 +182,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	UtilPipeline pipeline;
 	pipeline.EnableImage(PXCImage::COLOR_FORMAT_RGB32);
-	pipeline.EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480); /* 2 * /
+	pipeline.EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480); // 2 
 	pipeline.Init();
 
 	UtilRender color_render(L"Color Stream");
 
 	FacePipeline* pipeline1 = new FacePipeline();
-	/*pipeline1->LoopFrames();
+	pipeline1->LoopFrames();
 	delete pipeline1;
-	return 0;* /
+	return 0;
 
 	for(;;) 
 	{
@@ -251,4 +209,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	pipeline.Close();
 	return 0;
 }
-*/
