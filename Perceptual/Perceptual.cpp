@@ -21,10 +21,10 @@
 
 theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 {
-	int x2 = max(first->position.x, second->position.x);
-	int x1 = min(first->position.x, second->position.x);
-	int y2 = max(first->position.y, second->position.y);
-	int y1 = min(first->position.y, second->position.y);
+	int x2 = max((int)first->position.x, (int)second->position.x);
+	int x1 = min((int)first->position.x, (int)second->position.x);
+	int y2 = max((int)first->position.y, (int)second->position.y);
+	int y1 = min((int)first->position.y, (int)second->position.y);
 
 	theCoords center;
 	center.first	= x1 + (x2 - x1)/2;
@@ -34,7 +34,7 @@ theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 
 int getDistance(theCoords point1, theCoords point2)
 {
-	return sqrt( double((point1.first-point2.first)*(point1.first-point2.first) + (point1.second-point2.second)*(point1.second-point2.second)));
+	return (int)sqrt( double((point1.first-point2.first)*(point1.first-point2.first) + (point1.second-point2.second)*(point1.second-point2.second)));
 }
 
 int wmain1(int argc,wchar_t * argv[])
