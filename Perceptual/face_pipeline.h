@@ -1,5 +1,9 @@
 // example from intel site
 
+#include "cstdlib"
+
+#include "GestureDetector.h"
+
 class FacePipeline: public UtilPipeline 
 {
 public:
@@ -19,6 +23,9 @@ public:
  
 	virtual bool OnNewFrame(void)
 	{
+		system("cls");
+		wprintf_s(L"SPbU for Intel, Head movement recognition using Perceptual SDK\r\n");
+
 		// face
 		PXCFaceAnalysis *faceAnalyzer = QueryFace();
 		PXCFaceAnalysis::Landmark *landmark = faceAnalyzer->DynamicCast<PXCFaceAnalysis::Landmark>();
