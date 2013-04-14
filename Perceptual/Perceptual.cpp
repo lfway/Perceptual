@@ -12,6 +12,28 @@
 #include "util_cmdline.h"
 #include "pxcface.h"
 
+#include <math.h>
+
+#define theLandMarkData PXCFaceAnalysis::Landmark::LandmarkData
+#define theCoords std::pair<int, int>
+
+theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
+{
+	int x2 = max(first->position.x, second->position.x);
+	int x1 = min(first->position.x, second->position.x);
+	int y2 = max(first->position.y, second->position.y);
+	int y1 = min(first->position.y, second->position.y);
+
+	theCoords center;
+	center.first	= x1 + (x2 - x1)/2;
+	center.second	= y1 + (y2 - y1)/2;
+	return center;
+}
+
+int getDistance(theCoords point1, theCoords point2)
+{
+	return sqrt( double((point1.first-point2.first)*(point1.first-point2.first) + (point1.second-point2.second)*(point1.second-point2.second)));
+}
 
 int wmain(int argc,wchar_t * argv[])
 {
@@ -112,7 +134,32 @@ int wmain(int argc,wchar_t * argv[])
 			faceRender->SetDetectionData(&face_data);
 			// Query landmark points
 			faceRender->SetLandmarkData(landmarkDetector, fid);
+			
+			theLandMarkData* data_left_inner	= new theLandMarkData();
+			theLandMarkData* data_left_outer	= new theLandMarkData();
+			theLandMarkData* data_right_inner	= new theLandMarkData();
+			theLandMarkData* data_right_outer	= new theLandMarkData();
+			theLandMarkData* data_mouth_left	= new theLandMarkData();
+			theLandMarkData* data_mouth_right	= new theLandMarkData();
+
+			landmarkDetector->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_LEFT_EYE_INNER_CORNER,	data_left_inner);
+			landmarkDetector->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_LEFT_EYE_OUTER_CORNER,	data_left_outer);
+			landmarkDetector->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_RIGHT_EYE_INNER_CORNER,	data_right_inner);
+			landmarkDetector->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_RIGHT_EYE_OUTER_CORNER,	data_right_outer);
+			landmarkDetector->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_MOUTH_LEFT_CORNER,		data_left_inner);
+			landmarkDetector->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_MOUTH_RIGHT_CORNER,		data_mouth_right);
+			
+			theCoords leftEye	= getCenter(data_left_inner, data_left_outer);
+			theCoords rightEye	= getCenter(data_right_inner, data_right_outer);
+			theCoords mouth		= getCenter(data_left_inner, data_mouth_right);
+
 			faceRender->PrintLandmarkData(landmarkDetector, fid);
+			
+			wprintf_s(L"Left eye = %d, %d\n", leftEye.first, leftEye.second);
+			wprintf_s(L"Right eye = %d, %d\n", rightEye.first, rightEye.second);
+			wprintf_s(L"Mouth = %d, %d\n", mouth.first, mouth.second);
+			wprintf_s(L"Eyes dist = %d\n", getDistance(leftEye, rightEye));
+
 			wprintf_s(L"timestamp=%I64d, frame=%d\n", timeStamp, fnum);
 		}
 		if(!faceRender->RenderFrame(images[0]))break;
