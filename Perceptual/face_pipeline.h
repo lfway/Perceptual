@@ -1,20 +1,16 @@
 // example from intel site
 
 #include "cstdlib"
-
 #include "util_render.h"
 #include "util_pipeline.h"
-
 #include "face_render.h"
 #include "util_capture_file.h"
 #include "util_cmdline.h"
 #include "pxcface.h"
 
-
 #include "GestureDetector.h"
 
 #define theLandMarkData PXCFaceAnalysis::Landmark::LandmarkData
-
 
 theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 {
@@ -32,7 +28,6 @@ theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 class FacePipeline: public UtilPipeline 
 {
 public:
-	
 	FacePipeline(void): UtilPipeline()
 	{
 		m_face_render = NULL;
@@ -46,13 +41,8 @@ public:
 		if(m_face_render != NULL)
 			delete m_face_render;
 	}
- 
 	virtual bool OnNewFrame(void)
 	{
-		//system("cls");
-
-		//wprintf_s(L"SPbU for Intel, Head movement recognition using Perceptual SDK\r\n");
-
 		// face
 		PXCFaceAnalysis *faceAnalyzer = QueryFace();
 		PXCFaceAnalysis::Landmark *landmark = faceAnalyzer->DynamicCast<PXCFaceAnalysis::Landmark>();
@@ -82,10 +72,6 @@ public:
 			// landmarks
 			m_face_render->SetLandmarkData (landmark, fid);
 
-
-
-
-
 			// work with gestures
 			theLandMarkData* data_left_inner	= new theLandMarkData();
 			theLandMarkData* data_left_outer	= new theLandMarkData();
@@ -93,24 +79,22 @@ public:
 			theLandMarkData* data_right_outer	= new theLandMarkData();
 			theLandMarkData* data_mouth_left	= new theLandMarkData();
 			theLandMarkData* data_mouth_right	= new theLandMarkData();
-
 			landmark->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_LEFT_EYE_INNER_CORNER,	data_left_inner);
 			landmark->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_LEFT_EYE_OUTER_CORNER,	data_left_outer);
 			landmark->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_RIGHT_EYE_INNER_CORNER,	data_right_inner);
 			landmark->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_RIGHT_EYE_OUTER_CORNER,	data_right_outer);
 			landmark->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_MOUTH_LEFT_CORNER,		data_left_inner);
 			landmark->QueryLandmarkData(fid, PXCFaceAnalysis::Landmark::LABEL_MOUTH_RIGHT_CORNER,		data_mouth_right);
-			
 			pair<double, double> left_o		= pair<double, double>(data_left_outer->position.x, data_left_outer->position.y);
 			pair<double, double> left_i		= pair<double, double>(data_left_inner->position.x, data_left_inner->position.y);
 			pair<double, double> right_i	= pair<double, double>(data_right_inner->position.x, data_right_inner->position.y);
 			pair<double, double> right_o	= pair<double, double>(data_right_outer->position.x, data_right_outer->position.y);
-
 			// centers on face tiles, strange bug
 			theCoords leftEye	= left_o;//getCenter(data_left_inner, data_left_outer);
 			theCoords rightEye	= pair<int, int>(right_i.first, right_o.second); //getCenter(data_right_inner, data_right_outer);
 			theCoords mouth		= getCenter(data_left_inner, data_mouth_right);
-				
+			
+			// print face parts positions:
 			wprintf_s(L"Left eye: %d, %d\n", leftEye.first, leftEye.second);
 			wprintf_s(L"Right eye: %d, %d\n", rightEye.first, rightEye.second);
 			wprintf_s(L"Mouth: %d, %d\n", mouth.first, mouth.second);
@@ -124,15 +108,14 @@ public:
 			// add face position to gesturedetector
 			mMyDetector.AddPoision(position_);
 			mMyDetector.Process();
-			// print amplit_incline
-			int amplit_incline = mMyDetector.getAmplitudeIncline();
-			wprintf_s(L"amplit_incline: %d\n", amplit_incline);
-			//print incline_history
-			string incline_history = mMyDetector.getInclineHistory();
-			const char* szName = incline_history.c_str();
-			printf(szName);
-			wprintf_s(L"\n\n");
 
+			// print Incline
+			int amplit_incline = mMyDetector.getAmplitudeIncline();
+			wprintf_s(L"Incline amplitude: %d, history:\n", amplit_incline);
+			string incline_history = mMyDetector.getInclineHistory();
+			printf(incline_history.c_str());
+
+			wprintf_s(L"\n\n");
 		}
 		return (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );
 	}
