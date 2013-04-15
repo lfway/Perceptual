@@ -9,11 +9,6 @@
 
 #include "face_pipeline.h"
 
-int getDistance(theCoords point1, theCoords point2)
-{
-	return (int)sqrt( double((point1.first-point2.first)*(point1.first-point2.first) + (point1.second-point2.second)*(point1.second-point2.second)));
-}
-
 int wmain1(int argc,wchar_t * argv[])
 {
 	
@@ -134,12 +129,12 @@ int wmain1(int argc,wchar_t * argv[])
 
 			faceRender->PrintLandmarkData(landmarkDetector, fid);
 			
-			wprintf_s(L"Left eye = %d, %d\n", leftEye.first, leftEye.second);
-			wprintf_s(L"Right eye = %d, %d\n", rightEye.first, rightEye.second);
-			wprintf_s(L"Mouth = %d, %d\n", mouth.first, mouth.second);
-			wprintf_s(L"Eyes dist = %d\n", getDistance(leftEye, rightEye));
+			//wprintf_s(L"Left eye = %d, %d\n", leftEye.first, leftEye.second);
+			//wprintf_s(L"Right eye = %d, %d\n", rightEye.first, rightEye.second);
+			//wprintf_s(L"Mouth = %d, %d\n", mouth.first, mouth.second);
+			//wprintf_s(L"Eyes dist = %d\n", getDistance(leftEye, rightEye));
 
-			wprintf_s(L"timestamp=%I64d, frame=%d\n", timeStamp, fnum);
+			//wprintf_s(L"timestamp=%I64d, frame=%d\n", timeStamp, fnum);
 		}
 		if(!faceRender->RenderFrame(images[0]))break;
 		

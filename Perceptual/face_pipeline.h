@@ -95,9 +95,9 @@ public:
 			theCoords mouth		= getCenter(data_left_inner, data_mouth_right);
 			
 			// print face parts positions:
-			wprintf_s(L"Left eye: %d, %d\n", leftEye.first, leftEye.second);
-			wprintf_s(L"Right eye: %d, %d\n", rightEye.first, rightEye.second);
-			wprintf_s(L"Mouth: %d, %d\n", mouth.first, mouth.second);
+			//wprintf_s(L"Left eye: %d, %d\n", leftEye.first, leftEye.second);
+			//wprintf_s(L"Right eye: %d, %d\n", rightEye.first, rightEye.second);
+			//wprintf_s(L"Mouth: %d, %d\n", mouth.first, mouth.second);
 
 			//double eye_angle = CalculateAngle(leftEye, rightEye);
 			//wprintf_s(L"Eyes angle: %d\n", (int)eye_angle);
@@ -116,8 +116,15 @@ public:
 
 			// print Turn
 			//wprintf_s(L"Turn amplitude: %d, history:\n", mMyDetector.getAmplitudeTurn());
-			wprintf_s(L"Turn history: ");
+			wprintf_s(L"Turn history: \n");
 			printf(mMyDetector.getTurnHistory().c_str());
+			wprintf_s(L"\n");
+
+			// print Z
+			wprintf_s(L"Z history: \n");
+			printf(mMyDetector.getZHistory().c_str());
+
+			
 			wprintf_s(L"\n\n");
 		}
 		return (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );

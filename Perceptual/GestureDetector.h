@@ -8,6 +8,11 @@ using namespace std;
 
 #define theCoords std::pair<int, int>
 
+int getDistance(theCoords point1, theCoords point2)
+{
+	return (int)sqrt( double((point1.first-point2.first)*(point1.first-point2.first) + (point1.second-point2.second)*(point1.second-point2.second)));
+}
+
 enum GesturesList
 {
 	/* <- .. OO << >> <- -> ^v v^ */
@@ -52,12 +57,15 @@ public:
 		mAngleRightEyeToMouth	= CalculateAngle(mEyeRight, mMouth);
 		//center face
 		mCenterFace = theCoords((mEyeLeft.first + mEyeRight.first)/2, (mEyeLeft.second + mEyeRight.second)/2);
+		//eyes distance
+		mEyesDist = getDistance(mEyeLeft, mEyeRight);
 	}
 	int getAndleEyes() const { return mAngleLeftEyeToRightEye; }
-	int getCenter() const { 
-		return mCenterFace.first; 
-	}
+	int getCenter() const { return mCenterFace.first; }
+	int getEyesDist() const { return mEyesDist; }
+
 protected:
+	int mEyesDist;
 	theCoords mEyeLeft;
 	theCoords mEyeRight;
 	theCoords mMouth;
@@ -70,10 +78,12 @@ protected:
 
 	int m_DeltaIncline;
 	int m_DeltaTurnLeftRight;
+	int m_DeltaZMovement;
 
 public:
 	string m_incline_to;
 	string m_turn_to;
+	string m_z_to;
 };
 
 class GestureDetector
@@ -113,7 +123,6 @@ public:
 		if(abs(delta_angle_eyes) > 100)
 			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "E";
 
-
 		// turn amplitude & history
 		int center_face_turn_prelast = mFacePositionsSequence[mFacePositionsSequence.size()-2].getCenter();
 		int center_face_turn_last = mFacePositionsSequence[mFacePositionsSequence.size()-1].getCenter();
@@ -127,6 +136,19 @@ public:
 		if(abs(delta_center_face_turn) > 100)
 			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_turn_to = "E";
 
+		// z movement history
+		int eyes_dist_prelast	= mFacePositionsSequence[mFacePositionsSequence.size()-2].getEyesDist();
+		int eyes_dist_last		= mFacePositionsSequence[mFacePositionsSequence.size()-1].getEyesDist();
+		int delta_eyes_dist = eyes_dist_last - eyes_dist_prelast;
+		if(delta_eyes_dist < 0)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_z_to = "o";
+		if(delta_eyes_dist > 0)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_z_to = "O";
+		if(delta_eyes_dist == 0)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_z_to = ".";
+		if(abs(delta_eyes_dist) > 100)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_z_to = "E";
+
 		CalcAmplitudes();
 		CalcHistory();
 	}
@@ -135,15 +157,18 @@ public:
 	string getInclineHistory() const { return mInclineHistory; }
 	int getAmplitudeTurn() const { return mAmplitudeTurnHorizontal; }
 	string getTurnHistory() const { return mTurnHistory; }
+	string getZHistory() const { return mZHistory; }
 protected:
 	void CalcHistory()
 	{
 		mInclineHistory.clear();
 		mTurnHistory.clear();
+		mZHistory.clear();
 		for(unsigned int i = 0; i < mFacePositionsSequence.size(); i++)
 		{
 			mInclineHistory	+= mFacePositionsSequence[i].m_incline_to;
 			mTurnHistory	+= mFacePositionsSequence[i].m_turn_to;
+			mZHistory		+= mFacePositionsSequence[i].m_z_to;
 		}
 	}
 	int CalcAmplitudes()
@@ -174,6 +199,7 @@ protected:
 public:
 	string mInclineHistory;
 	string mTurnHistory;
+	string mZHistory;
 protected:
 	int mAmplitudeTurnHorizontal;
 	int mAmplitudeTurnHorizontal_center;
