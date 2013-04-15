@@ -14,7 +14,7 @@
 #include "GestureDetector.h"
 
 #define theLandMarkData PXCFaceAnalysis::Landmark::LandmarkData
-#define theCoords std::pair<int, int>
+
 
 theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 {
@@ -32,6 +32,7 @@ theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 class FacePipeline: public UtilPipeline 
 {
 public:
+	
 	FacePipeline(void): UtilPipeline()
 	{
 		m_face_render = NULL;
@@ -49,6 +50,7 @@ public:
 	virtual bool OnNewFrame(void)
 	{
 		//system("cls");
+
 		//wprintf_s(L"SPbU for Intel, Head movement recognition using Perceptual SDK\r\n");
 
 		// face
@@ -104,6 +106,7 @@ public:
 			pair<double, double> right_i	= pair<double, double>(data_right_inner->position.x, data_right_inner->position.y);
 			pair<double, double> right_o	= pair<double, double>(data_right_outer->position.x, data_right_outer->position.y);
 
+			// centers on face tiles, strange bug
 			theCoords leftEye	= left_o;//getCenter(data_left_inner, data_left_outer);
 			theCoords rightEye	= pair<int, int>(right_i.first, right_o.second); //getCenter(data_right_inner, data_right_outer);
 			theCoords mouth		= getCenter(data_left_inner, data_mouth_right);
@@ -111,17 +114,30 @@ public:
 			wprintf_s(L"Left eye: %d, %d\n", leftEye.first, leftEye.second);
 			wprintf_s(L"Right eye: %d, %d\n", rightEye.first, rightEye.second);
 			wprintf_s(L"Mouth: %d, %d\n", mouth.first, mouth.second);
-			wprintf_s(L"\n");
 
-			double eye_angle = CalculateAngle(leftEye, rightEye);
-			wprintf_s(L"Eyes angle: %d\n", (int)eye_angle);
+			//double eye_angle = CalculateAngle(leftEye, rightEye);
+			//wprintf_s(L"Eyes angle: %d\n", (int)eye_angle);
 
-
+			// create face position
+			FacePosition position_(leftEye, rightEye, mouth, theCoords(face_data.rectangle.x + face_data.rectangle.w/2, face_data.rectangle.y + face_data.rectangle.h/2));
+			
+			// add face position to gesturedetector
+			mMyDetector.AddPoision(position_);
+			mMyDetector.Process();
+			// print amplit_incline
+			int amplit_incline = mMyDetector.getAmplitudeIncline();
+			wprintf_s(L"amplit_incline: %d\n", amplit_incline);
+			//print incline_history
+			string incline_history = mMyDetector.getInclineHistory();
+			const char* szName = incline_history.c_str();
+			printf(szName);
+			wprintf_s(L"\n\n");
 
 		}
 		return (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );
 	}
  
 protected: 
+	GestureDetector mMyDetector;
 	FaceRender* m_face_render;
 };
