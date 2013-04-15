@@ -110,11 +110,14 @@ public:
 			mMyDetector.Process();
 
 			// print Incline
-			int amplit_incline = mMyDetector.getAmplitudeIncline();
-			wprintf_s(L"Incline amplitude: %d, history:\n", amplit_incline);
-			string incline_history = mMyDetector.getInclineHistory();
-			printf(incline_history.c_str());
+			wprintf_s(L"Incline amplitude: %d, history:\n", mMyDetector.getAmplitudeIncline());
+			printf(mMyDetector.getInclineHistory().c_str());
+			wprintf_s(L"\n");
 
+			// print Turn
+			//wprintf_s(L"Turn amplitude: %d, history:\n", mMyDetector.getAmplitudeTurn());
+			wprintf_s(L"Turn history: ");
+			printf(mMyDetector.getTurnHistory().c_str());
 			wprintf_s(L"\n\n");
 		}
 		return (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );

@@ -51,27 +51,29 @@ public:
 		mAngleLeftEyeToMouth	= CalculateAngle(mEyeLeft, mMouth);
 		mAngleRightEyeToMouth	= CalculateAngle(mEyeRight, mMouth);
 		//center face
-		mCenterFace = theCoords((mEyeLeft.first + mEyeRight.first + mMouth.first)/3, (mEyeLeft.second + mEyeRight.second + mMouth.second)/3);
+		mCenterFace = theCoords((mEyeLeft.first + mEyeRight.first)/2, (mEyeLeft.second + mEyeRight.second)/2);
 	}
 	int getAndleEyes() const { return mAngleLeftEyeToRightEye; }
+	int getCenter() const { 
+		return mCenterFace.first; 
+	}
 protected:
 	theCoords mEyeLeft;
 	theCoords mEyeRight;
 	theCoords mMouth;
 	theCoords mCenterFrame;
 	theCoords mCenterFace;
-	int mDX;
-	int mDY;
-	int mDXframe;
-	int mDYframe;
+
 	int mAngleLeftEyeToRightEye;
 	int mAngleLeftEyeToMouth;
 	int mAngleRightEyeToMouth;
 
 	int m_DeltaIncline;
+	int m_DeltaTurnLeftRight;
 
 public:
 	string m_incline_to;
+	string m_turn_to;
 };
 
 class GestureDetector
@@ -86,15 +88,22 @@ public:
 			mFacePositionsSequence.erase(mFacePositionsSequence.begin());
 		}
 	}
+
 	void Process()
 	{
+		if( mFacePositionsSequence.size() == 1 )
+		{
+			mAmplitudeTurnHorizontal_center = mFacePositionsSequence[0].getCenter();
+			int qwe = 234;
+		}
 		// incline delta
 		if(mFacePositionsSequence.size() < 2)
 			return;
+
+		// incline amplitude & history
 		int angle_eyes_prelast = mFacePositionsSequence[mFacePositionsSequence.size()-2].getAndleEyes();
 		int angle_eyes_last = mFacePositionsSequence[mFacePositionsSequence.size()-1].getAndleEyes();	
 		int delta_angle_eyes = angle_eyes_last - angle_eyes_prelast;
-
 		if(delta_angle_eyes < 0)
 			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "<";
 		if(delta_angle_eyes > 0)
@@ -103,21 +112,38 @@ public:
 			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = ".";
 		if(abs(delta_angle_eyes) > 100)
 			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "E";
-		// incline amplitude
+
+
+		// turn amplitude & history
+		int center_face_turn_prelast = mFacePositionsSequence[mFacePositionsSequence.size()-2].getCenter();
+		int center_face_turn_last = mFacePositionsSequence[mFacePositionsSequence.size()-1].getCenter();
+		int delta_center_face_turn = center_face_turn_last - center_face_turn_prelast;
+		if(delta_center_face_turn < 0)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_turn_to = "<";
+		if(delta_center_face_turn > 0)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_turn_to = ">";
+		if(delta_center_face_turn == 0)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_turn_to = ".";
+		if(abs(delta_center_face_turn) > 100)
+			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_turn_to = "E";
 
 		CalcAmplitudes();
-		CalcInclineHistory();
+		CalcHistory();
 	}
 
 	int getAmplitudeIncline() const { return mAmplitudeIncline; }
 	string getInclineHistory() const { return mInclineHistory; }
+	int getAmplitudeTurn() const { return mAmplitudeTurnHorizontal; }
+	string getTurnHistory() const { return mTurnHistory; }
 protected:
-	void CalcInclineHistory()
+	void CalcHistory()
 	{
 		mInclineHistory.clear();
+		mTurnHistory.clear();
 		for(unsigned int i = 0; i < mFacePositionsSequence.size(); i++)
 		{
-			mInclineHistory += mFacePositionsSequence[i].m_incline_to;
+			mInclineHistory	+= mFacePositionsSequence[i].m_incline_to;
+			mTurnHistory	+= mFacePositionsSequence[i].m_turn_to;
 		}
 	}
 	int CalcAmplitudes()
@@ -125,18 +151,33 @@ protected:
 		if( mFacePositionsSequence.size() < 2 )
 			return -1;
 		int angle_min = mFacePositionsSequence[0].getAndleEyes(), angle_max = mFacePositionsSequence[0].getAndleEyes();
+		int turn_min = mFacePositionsSequence[0].getCenter(), turn_max = mFacePositionsSequence[0].getCenter();
 		for(unsigned int i = 0; i < mFacePositionsSequence.size(); i++)
 		{
 			int angle_ = mFacePositionsSequence[i].getAndleEyes();
 			if(angle_ < angle_min) angle_min = angle_;
 			if(angle_ > angle_max) angle_max = angle_;
+
+			//int turn_ = mFacePositionsSequence[i].getCenter() - mAmplitudeTurnHorizontal_center;
+			int turn_ = abs(mAmplitudeTurnHorizontal_center - abs(mAmplitudeTurnHorizontal_center - mFacePositionsSequence[i].getCenter()));
+			if(turn_ < turn_min) turn_min = turn_;
+			if(turn_ > turn_max) turn_max = turn_;
 		}
 		mAmplitudeIncline = angle_max - angle_min;
+		mAmplitudeTurnHorizontal = abs(abs(turn_max + turn_min)/2 - mAmplitudeTurnHorizontal_center);
+
+		if( abs(mAmplitudeTurnHorizontal) < 3)
+			mAmplitudeTurnHorizontal_center = (turn_max + turn_min)/2;
+
+		//mAmplitudeTurnHorizontal; -= mAmplitudeTurnHorizontal_center;
 	}
 public:
 	string mInclineHistory;
+	string mTurnHistory;
 protected:
 	int mAmplitudeTurnHorizontal;
+	int mAmplitudeTurnHorizontal_center;
+
 	int mAmplitudeIncline;
 	int mAmplitudeUpDown;
 	int mAmplitudeZdistance;
