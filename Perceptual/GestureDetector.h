@@ -1,3 +1,10 @@
+#include <vector>
+#include <math.h>
+using namespace std;
+
+#define SEQUENCE_LENGTH 30
+#define Z_CONSTANT_PERCENT 20
+
 enum GesturesList
 {
 	/* <- .. OO << >> <- -> ^v v^ */
@@ -9,8 +16,27 @@ enum IntermediateGesturesList
 	GESTURE_ERROR_, GESTURE_DEFAULT_, GESTURE_FARTHER_, GESTURE_NEARER_, GESTURE_TURNLEFT_, GESTURE_TURNRIGHT_, GESTURE_INCLINELEFT_, GESTURE_INCLINERIGHT_, GESTURE_UP_, GESTURE_DOWN_
 };
 
-#define SEQUENCE_LENGTH 30
-#define Z_CONSTANT_PERCENT 20
+double CalculateAngle(pair<int, int> point1, pair<int, int> point2)
+{	
+	int dx = point1.first - point2.first;
+	int dy = point2.second - point1.second;
+	/*
+	double giptnz = sqrt( (double)dx*dx + (double)dy*dy);
+
+	double a1 = dy/giptnz;
+	double a2 = acos(a1);
+	double a3 = a2/3.14*180;
+
+
+	double a4 = asin(dy/giptnz)   /3.14*180;
+
+	return atan(dy/dx)*180/3.14;
+	return a4;
+
+	return dx/giptnz/3.14*180;*/
+
+	return atan((double)dy/(double)dx)*180/3.14;
+}
 
 /*
 For every frame
@@ -39,14 +65,11 @@ struct FacePosition
 class GestureDetector
 {
 
-	GestureDetector():mSecuenceLength(30){};
-	
-	int getSecuenceLength(){return mSecuenceLength;};
-
 	void AddPoision(FacePosition position)
 	{
-		
+
 	}
+
 	int Procces()
 	{
 

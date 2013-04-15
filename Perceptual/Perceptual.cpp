@@ -4,33 +4,10 @@
 #include "pxccapture.h"
 #include "pxcsmartptr.h"
 
-#include "util_render.h"
-#include "util_pipeline.h"
-
-#include "face_render.h"
-#include "util_capture_file.h"
-#include "util_cmdline.h"
-#include "pxcface.h"
 
 #include <math.h>
 
 #include "face_pipeline.h"
-
-#define theLandMarkData PXCFaceAnalysis::Landmark::LandmarkData
-#define theCoords std::pair<int, int>
-
-theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
-{
-	int x2 = max((int)first->position.x, (int)second->position.x);
-	int x1 = min((int)first->position.x, (int)second->position.x);
-	int y2 = max((int)first->position.y, (int)second->position.y);
-	int y1 = min((int)first->position.y, (int)second->position.y);
-
-	theCoords center;
-	center.first	= x1 + (x2 - x1)/2;
-	center.second	= y1 + (y2 - y1)/2;
-	return center;
-}
 
 int getDistance(theCoords point1, theCoords point2)
 {
