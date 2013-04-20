@@ -155,6 +155,8 @@ void easyPerceptual()
 	pipeline.EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480); // 2 
 	pipeline.Init();
 
+	UtilRender color_render(L"Color Stream");
+
 	for(;;) 
 	{
 		// Image capturing
@@ -168,7 +170,6 @@ void easyPerceptual()
 		pipeline.ReleaseFrame();
 	}
 	pipeline.Close();
-	return 0;
 }
 
 int _tmain(int argc, _TCHAR* argv[]) 
