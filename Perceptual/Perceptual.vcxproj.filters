@@ -24,13 +24,13 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\perceptual\PCSDK\sample\common\include\face_render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="face_pipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GestureDetector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\dev\PCSDK\sample\common\include\face_render.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,7 +41,7 @@
     <ClCompile Include="Perceptual.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\perceptual\PCSDK\sample\common\src\face_render.cpp">
+    <ClCompile Include="..\..\..\..\dev\PCSDK\sample\common\src\face_render.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
