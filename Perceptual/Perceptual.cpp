@@ -136,6 +136,7 @@ int wmain1(int argc,wchar_t * argv[])
 
 			//wprintf_s(L"timestamp=%I64d, frame=%d\n", timeStamp, fnum);
 		}
+		//Commit this to image output decine
 		if(!faceRender->RenderFrame(images[0]))break;
 		
 	}
@@ -147,37 +148,36 @@ int wmain1(int argc,wchar_t * argv[])
 
 
 
-
-
-int _tmain(int argc, _TCHAR* argv[]) 
+void easyPerceptual()
 {
-
 	UtilPipeline pipeline;
 	pipeline.EnableImage(PXCImage::COLOR_FORMAT_RGB32);
 	pipeline.EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480); // 2 
 	pipeline.Init();
 
-	UtilRender color_render(L"Color Stream");
-
-	FacePipeline* pipeline1 = new FacePipeline();
-	pipeline1->LoopFrames();
-	delete pipeline1;
-	return 0;
-
 	for(;;) 
 	{
-		// Получаем картинку
+		// Image capturing
 		if(!pipeline.AcquireFrame(true)) 
 			break;
 		PXCImage *color_image = pipeline.QueryImage(PXCImage::IMAGE_TYPE_COLOR);
 
-		
-
-		// Выводим картинку
+		// Image output
 		if(!color_render.RenderFrame(color_image)) 
 			break;
 		pipeline.ReleaseFrame();
 	}
 	pipeline.Close();
+	return 0;
+}
+
+int _tmain(int argc, _TCHAR* argv[]) 
+{
+	FacePipeline* pipeline1 = new FacePipeline();
+	pipeline1->EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480);
+
+	pipeline1->LoopFrames();
+
+	delete pipeline1;
 	return 0;
 }
