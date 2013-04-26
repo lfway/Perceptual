@@ -3,6 +3,11 @@
 #include <math.h>
 using namespace std;
 
+
+typedef void (CALLBACK * fnCallBackFunc)(std::string value);
+
+
+
 #define SEQUENCE_LENGTH 30
 #define Z_CONSTANT_PERCENT 20
 
@@ -51,10 +56,10 @@ public:
 		mEyeLeft(eyeLeft), mEyeRight(eyeRight), mMouth(mouth), mCenterFrame(centerFrame)
 	{
 		// angle between eyes
-		mAngleLeftEyeToRightEye = CalculateAngle(mEyeLeft, mEyeRight);
+		mAngleLeftEyeToRightEye = (int)CalculateAngle(mEyeLeft, mEyeRight);
 		// angle between eye - mouth
-		mAngleLeftEyeToMouth	= CalculateAngle(mEyeLeft, mMouth);
-		mAngleRightEyeToMouth	= CalculateAngle(mEyeRight, mMouth);
+		mAngleLeftEyeToMouth	= (int)CalculateAngle(mEyeLeft, mMouth);
+		mAngleRightEyeToMouth	= (int)CalculateAngle(mEyeRight, mMouth);
 		//center face
 		mCenterFace = theCoords((mEyeLeft.first + mEyeRight.first)/2, (mEyeLeft.second + mEyeRight.second)/2);
 		//eyes distance
@@ -86,10 +91,17 @@ public:
 	string m_z_to;
 };
 
+
+
+
+
+
+
+#include <sstream>
 class GestureDetector
 {
 public:
-
+	fnCallBackFunc func;
 	void AddPoision(FacePosition position)
 	{
 		mFacePositionsSequence.push_back(position);
@@ -114,14 +126,18 @@ public:
 		int angle_eyes_prelast = mFacePositionsSequence[mFacePositionsSequence.size()-2].getAndleEyes();
 		int angle_eyes_last = mFacePositionsSequence[mFacePositionsSequence.size()-1].getAndleEyes();	
 		int delta_angle_eyes = angle_eyes_last - angle_eyes_prelast;
+		std::string sss111222333 = "";
 		if(delta_angle_eyes < 0)
-			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "<";
+		{mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "<";sss111222333="<";}
 		if(delta_angle_eyes > 0)
-			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = ">";
+		{mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = ">";sss111222333=">";}
 		if(delta_angle_eyes == 0)
-			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = ".";
+		{mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = ".";sss111222333=".";}
 		if(abs(delta_angle_eyes) > 100)
-			mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "E";
+		{mFacePositionsSequence[mFacePositionsSequence.size()-1].m_incline_to = "E";sss111222333="E";}
+
+
+		func(sss111222333);
 
 		// turn amplitude & history
 		int center_face_turn_prelast = mFacePositionsSequence[mFacePositionsSequence.size()-2].getCenter();
@@ -195,6 +211,7 @@ protected:
 			mAmplitudeTurnHorizontal_center = (turn_max + turn_min)/2;
 
 		//mAmplitudeTurnHorizontal; -= mAmplitudeTurnHorizontal_center;
+		return 0;
 	}
 public:
 	string mInclineHistory;

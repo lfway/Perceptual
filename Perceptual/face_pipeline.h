@@ -23,7 +23,7 @@ theCoords getCenter(theLandMarkData* first, theLandMarkData* second)
 	center.first	= x1 + (x2 - x1)/2;
 	center.second	= y1 + (y2 - y1)/2;
 	return center;
-}
+};
 
 class FacePipeline: public UtilPipeline 
 {
@@ -36,11 +36,18 @@ public:
 		// Enable the face landmark detector
 		EnableFaceLandmark();
 	}
+
+	void SetCallback(fnCallBackFunc FFunc)
+	{
+		mMyDetector.func = FFunc;
+	}
+
 	~FacePipeline()
 	{
 		if(m_face_render != NULL)
 			delete m_face_render;
 	}
+	// Frame processing
 	virtual bool OnNewFrame(void)
 	{
 		// face
@@ -127,10 +134,46 @@ public:
 			
 			wprintf_s(L"\n\n");
 		}
-		return (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );
+		//return  (m_face_render->RenderFrame(QueryImage(PXCImage::IMAGE_TYPE_COLOR)) );
+		return false;
 	}
  
 protected: 
 	GestureDetector mMyDetector;
 	FaceRender* m_face_render;
+};
+
+
+
+
+class ISuperClass
+{
+public:
+	virtual void Go1()=0;
+};
+
+class TheSuperClass : public ISuperClass
+{
+public:
+	TheSuperClass()
+	{  
+		//pipeline1 = new FacePipeline();
+	}
+	/*~TheSuperClass()
+	{
+
+	}*/
+	virtual void Go1()
+	{
+		//pipeline1 = new FacePipeline();
+		pipeline1->EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480);
+		pipeline1->LoopFrames();
+	}
+	/*virtual void Settt(fnCallBackFunc  mfunc)
+	{
+		pipeline1->SetCallback(mfunc);
+	}*/
+
+	//fnCallBackFunc  mfunc;
+	FacePipeline* pipeline1;
 };

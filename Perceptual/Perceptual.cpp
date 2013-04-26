@@ -1,13 +1,34 @@
 #include "stdafx.h"
+//#include <string>
 
 #include "pxcsession.h"
 #include "pxccapture.h"
 #include "pxcsmartptr.h"
 
-
 #include <math.h>
 
-#include "face_pipeline.h"
+#include "PerceptualCore.h"
+
+void CALLBACK MyCallbackFunc(std::string value)
+{
+    printf("callback: %s\n", value.c_str());
+}
+
+int _tmain(int argc, _TCHAR* argv[]) 
+{
+	ISuperClass* processor = Inittt();
+	//Register_Callback(MyCallbackFunc);
+	return 0;
+}
+
+
+
+
+
+/*
+
+
+
 
 int wmain1(int argc,wchar_t * argv[])
 {
@@ -42,7 +63,7 @@ int wmain1(int argc,wchar_t * argv[])
 	// Подключаем камеру
 	UtilCaptureFile capture(session,cmdl.m_recordedFile,cmdl.m_bRecord);
 	if(cmdl.m_sdname)
-		capture.SetFilter(cmdl.m_sdname); /*L"Integrated Camera"*/
+		capture.SetFilter(cmdl.m_sdname); /*L"Integrated Camera"* /
 	sts=capture.LocateStreams(&faInfo.inputs);
 	if(sts<PXC_STATUS_NO_ERROR)
 	{
@@ -76,7 +97,7 @@ int wmain1(int argc,wchar_t * argv[])
 	
 	// Create Renderer
 	PXCSmartPtr<FaceRender> faceRender(new FaceRender(L"Landmark Detection Sample"));
-	int fnum;
+	pxcU32 fnum;
 	for(fnum=0;fnum<cmdl.m_nframes;fnum++)
 	{
 	
@@ -144,10 +165,6 @@ int wmain1(int argc,wchar_t * argv[])
 	return 0;
 }
 
-
-
-
-
 void easyPerceptual()
 {
 	UtilPipeline pipeline;
@@ -172,13 +189,21 @@ void easyPerceptual()
 	pipeline.Close();
 }
 
-int _tmain(int argc, _TCHAR* argv[]) 
+class MainClass
 {
-	FacePipeline* pipeline1 = new FacePipeline();
-	pipeline1->EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480);
+public:
+	MainClass()
+	{
+		pipeline1 = new FacePipeline();
+		pipeline1->EnableImage(PXCImage::COLOR_FORMAT_RGB32, 640, 480);
+		pipeline1->LoopFrames();
+	}
+	~MainClass()
+	{
+		delete pipeline1;
+	}
+private:
+	FacePipeline* pipeline1;
+};
 
-	pipeline1->LoopFrames();
-
-	delete pipeline1;
-	return 0;
-}
+*/
